@@ -64,15 +64,34 @@ class StudentTestCase(LiveServerTestCase):
         # gets a more manageable list.
         second_artist_input = self.browser.find_element_by_css_selector("input#jmad-artist")
         second_artist_input.send_keys("Cannonball Adderley")
-        
-        # He clicks on a search result.
         self.browser.find_element_by_css_selector("form button").click()
-        second_search_results = self.browser.find_elements_by_css_selector(".jmad-search-result")
+        second_search_results = self.browser.find_elements_by_css_selector(".jmad-search-result a")
         self.assertEqual(len(second_search_results), 2)
+
+        # He clicks on a search result.
+        second_search_results[0].click()
         self.fail("Incomplete Test")
         
         # The solo page has the title, artist and album for
         # this particular solo.
+        self.assertEqual(
+            self.browser.current_url, "{}/solos/2/".format(self.live_server_url)
+        )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-artist").text, "Cannonball Adderley"
+        )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-track").text, "All Blues"
+        )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-album").text, "Kind of Blue"
+        )
 
         # He also sees the start and the end time of the
         # solo
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-start-time").text, "2:06"
+        )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-end-time").text, "4:01"
+        )
