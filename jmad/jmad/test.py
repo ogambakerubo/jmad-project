@@ -1,5 +1,6 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
+import pdb
 
 from solos.models import Solo
 
@@ -74,6 +75,7 @@ class StudentTestCase(LiveServerTestCase):
         
         # The solo page has the title, artist and album for
         # this particular solo.
+        pdb.set_trace()
         self.assertEqual(
             self.browser.current_url, "{}/solos/2/".format(self.live_server_url)
         )
