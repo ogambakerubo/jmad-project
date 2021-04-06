@@ -26,4 +26,4 @@ def index(request):
     return render(request, 'solos/index.html', context)
 
 class SoloDetailView(DetailView):
-    pass
+    model = Solo
