@@ -1,7 +1,7 @@
 from django.test import TestCase, RequestFactory
 from django.db.models.query import QuerySet
 
-from solos.views import index, SoloDetailView
+from solos.views import index, solo_detail
 from solos.models import Solo
 from albums.models import Album, Track
 
@@ -63,11 +63,12 @@ class SoloViewTestCase(SolosBaseTestCase):
         the correct template, and has the correct context
         """
 
-        request = self.factory.get("/solos/1/")
+        request = self.factory.get("/solos/no-funny-hats/bugle-call-rag/rich/")
 
-        response = SoloDetailView.as_view()(request, pk = self.drum_solo.pk)
+        with self.assertTemplateUsed("solos/solo_detail.html"):
+            response = solo_detail(request, album = self.no_funny_hats.slug, track = self.bugle_call_rag.slug, artist = self.drum_solo.slug)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context_data["solo"].artist, "Rich")
-        with self.assertTemplateUsed("solos/solo_detail.html"):
-            response.render()
+        page = response.content.decode()
+        self.assertInHTML('<p id="jmad-artist">Rich</p>', page)
+        self.assertInHTML('<p id="jmad-track">Bugle Call Rag [1 solo]</p>', page)

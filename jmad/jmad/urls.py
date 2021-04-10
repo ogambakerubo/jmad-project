@@ -20,5 +20,5 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index),
-    path('recordings/<slug:album>/<slug:track>/<slug:artist>/', views.SoloDetailView.as_view(), name = 'solo_detail_view')
+    path('recordings/<slug:album>/<slug:track>/<slug:artist>/', views.solo_detail, name = 'solo_detail_view')
 ]

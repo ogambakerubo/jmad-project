@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic.detail import DetailView
+# from django.views.generic.detail import DetailView
 
 from .models import Solo
 
@@ -25,5 +25,11 @@ def index(request):
 
     return render(request, 'solos/index.html', context)
 
-class SoloDetailView(DetailView):
-    model = Solo
+# class SoloDetailView(DetailView):
+#     model = Solo
+
+def solo_detail(request, album, track, artist):
+    context = {
+        "solo" : Solo.objects.get(slug = artist, track__slug = track, track__album__slug = album)
+    }
+    return render(request, 'solos/solo_detail.html', context)
