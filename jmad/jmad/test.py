@@ -142,9 +142,58 @@ class StudentTestCase(LiveServerTestCase):
 
         # He also sees the start and the end time of the
         # solo
-        # self.assertEqual(
-        #     self.browser.find_element_by_css_selector("#jmad-start-time").text, "2:06"
-        # )
-        # self.assertEqual(
-        #     self.browser.find_element_by_css_selector("#jmad-end-time").text, "4:01"
-        # )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-start-time").text, "2:06"
+        )
+        self.assertEqual(
+            self.browser.find_element_by_css_selector("#jmad-end-time").text, "4:01"
+        )
+
+    def test_staff_can_add_content(self):
+        """
+        Test that a 'staff' user can access the admin and
+        add albums, tracks and solos
+        """
+        # Bill would like to add a record and a number of
+        # solos to JMAD. He visits the admin site.
+        admin_root = self.browser.get(self.live_server_url + "/admin/")
+
+        # He can tell he's in the right place because of the
+        # title of the page.
+        self.assertEqual(self.browser.title, "Log in | Django site admin")
+        self.fail("Incomplete test")
+
+        # He enters his username and password and submits the form to log in
+
+        # He sees links to Albums, Tracks and Solos
+
+        # He clicks on Albums and sees all of the Albums that
+        # have been added so far
+
+        # Going back to the home page, he clicks the Tracks
+        # link and sees the Tracks that have been added.
+        # They are ordered first by Album, then by track number.
+
+        # He adds a track to an album that already exists.
+
+        # He adds another track, this time on an album that is not in JMAD yet.
+
+        # After adding the basic Track info, he clicks on the
+        # plus sign to add a new album.
+
+        # The focus shifts to the newly opened window, where he sees
+        # an Album form.
+
+        # After creating the Album, he goes back to finish the track.
+
+        # He goes back to the root of the admin site and clicks on 'Solos'.
+
+        # He sees Solos listed by Album, then Track, then start time.
+
+        # He adds a Solo for which the Track and Album do not yet exist.
+
+        # He adds a Track from the Solo page.
+
+        # He adds an Album from the Track popup.
+
+        # He finishes up both parent objects, and saves the Solo.
