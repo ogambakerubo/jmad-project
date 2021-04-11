@@ -192,10 +192,26 @@ class StudentTestCase(LiveServerTestCase):
             self.live_server_url + "/admin/solos/solo/"
         )
 
-        self.fail("Incomplete Test")
-
         # He clicks on Albums and sees all of the Albums that
-        # have been added so far
+        # have been added so far.
+        album_links[0].click()
+
+        self.assertEqual(
+            self.browser.find_element_by_link_text("Know What I Mean?").get_attribute("href"),
+            self.live_server_url + "/admin/albums/album/3/change/"
+        )
+
+        self.assertEqual(
+            self.browser.find_element_by_link_text("Kind of Blue").get_attribute("href"),
+            self.live_server_url + "/admin/albums/album/2/change/"
+        )
+
+        self.assertEqual(
+            self.browser.find_element_by_link_text("My Favourite Things").get_attribute("href"),
+            self.live_server_url + "/admin/albums/album/1/change/"
+        )
+
+        self.fail("Incomplete Test")
 
         # Going back to the home page, he clicks the Tracks
         # link and sees the Tracks that have been added.
