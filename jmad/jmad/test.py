@@ -66,6 +66,16 @@ class StudentTestCase(LiveServerTestCase):
             slug = "cannonball-adderley"
         )
 
+        # Solo 4
+        self.solo4 = Solo.objects.create(
+            instrument = "trumpet",
+            artist = "Miles Davis",
+            track = self.track2,
+            start_time = "1:46",
+            end_time = "4:04",
+            slug = "miles-davis"
+        )
+
         # Tracks 4 & 5
         self.track4 = Track.objects.create(name = "Freddie Freeloader", album = self.album2, track_number = 2)
         self.track5 = Track.objects.create(name = "Blue in Green", album = self.album2, track_number = 3)
@@ -224,23 +234,63 @@ class StudentTestCase(LiveServerTestCase):
         self.assertEqual(track_rows[4].text, "Know What I Mean? Waltz for Debby -")
         self.assertEqual(track_rows[5].text, "My Favourite Things My Favourite Things -")
 
-        self.fail("Incomplete Test")
-
         # He adds a track to an album that already exists.
+        self.browser.find_element_by_css_selector("#content-main ul.object-tools li a.addlink").click()
+        track_form = self.browser.find_element_by_id("track_form")
+        track_form.find_element_by_name("name").send_keys("So What")
+        track_form.find_element_by_name("album").find_elements_by_tag_name("option")[1].click()
+        track_form.find_element_by_name("track_number").send_keys("1")
+        track_form.find_element_by_name("slug").send_keys("so-what")
+        track_form.find_element_by_css_selector(".submit-row input").click()
+
+        self.assertEqual(
+            self.browser.find_elements_by_css_selector("#result_list tr")[1].text,
+            "Kind of Blue So What 1"
+        )
 
         # He adds another track, this time on an album that is not in JMAD yet.
+        self.browser.find_element_by_css_selector("#content-main ul.object-tools li a.addlink").click()
+        track_form = self.browser.find_element_by_id("track_form")
+        track_form.find_element_by_name("name").send_keys("My Funny Valentine")
 
         # After adding the basic Track info, he clicks on the
         # plus sign to add a new album.
+        track_form.find_element_by_id("add_id_album").click()
 
         # The focus shifts to the newly opened window, where he sees
         # an Album form.
+        self.browser.switch_to.window(self.browser.window_handles[1])
+        album_form = self.browser.find_element_by_id("album_form")
+        album_form.find_element_by_name("name").send_keys("Cookin'")
+        album_form.find_element_by_name("artist").send_keys("Miles David Quintet")
+        album_form.find_element_by_name("slug").send_keys("cookin")
+        album_form.find_element_by_css_selector(".submit-row input").click()
 
         # After creating the Album, he goes back to finish the track.
+        self.browser.switch_to.window(self.browser.window_handles[0])
+        track_form = self.browser.find_element_by_id("track_form")
+        track_form.find_element_by_name("track_number").send_keys("1")
+        track_form.find_element_by_name("slug").send_keys("my-funny-valentine")
+        track_form.find_element_by_css_selector(".submit-row input").click()
+
+        self.assertEqual(
+            self.browser.find_elements_by_css_selector("#result_list tr")[1].text,
+            "Cookin' My Funny Valentine 1"
+        )
 
         # He goes back to the root of the admin site and clicks on 'Solos'.
+        self.browser.find_element_by_css_selector("#site-name a").click()
+        self.browser.find_elements_by_link_text("Solos")[0].click()
 
         # He sees Solos listed by Album, then Track, then start time.
+        solo_rows = self.browser.find_elements_by_css_selector("#result_list tr")
+
+        self.assertEqual(solo_rows[1].text, "All Blues Miles Davis 1:46-4:04")
+        self.assertEqual(solo_rows[2].text, "All Blues Cannonball Adderley 2:06-4:01")
+        self.assertEqual(solo_rows[3].text.strip(), "Waltz for Debby Cannonball Adderley")
+        self.assertEqual(solo_rows[4].text.strip(), "My Favourite Things John Coltrane")
+
+        self.fail("Incomplete Test")
 
         # He adds a Solo for which the Track and Album do not yet exist.
 
