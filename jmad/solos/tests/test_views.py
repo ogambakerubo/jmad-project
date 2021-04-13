@@ -1,3 +1,4 @@
+from unittest.mock import patch, Mock
 from django.test import TestCase, RequestFactory
 from django.db.models.query import QuerySet
 
@@ -52,6 +53,27 @@ class IndexViewTestCase(SolosBaseTestCase):
         self.assertEqual(len(solos), 1)
         self.assertEqual(solos[0].artist, "Rich")
 
+    @patch('solos.models.Solo.get_artist_tracks_from_musicbrainz')
+    def test_index_view_returns_external_tracks(self, mock_solos_get_from_mb):
+        """
+        Test that the index view will return artists from the
+        MusicBrainz API if none are returned from our
+        database
+        """
+
+        mock_solo = Mock()
+        mock_solo.artist = "Jaco Pastorius"
+        mock_solos_get_from_mb.return_value = [mock_solo]
+        
+        response = self.client.get('/', {
+            "instrument": "Bass",
+            "artist": "Jaco Pastorius" # not in our DB
+        })
+
+        solos = response.context['solos']
+        self.assertEqual(len(solos), 1)
+        self.assertEqual(solos[0].artist, 'Jaco Pastorius')
+
 class SoloViewTestCase(SolosBaseTestCase):
 
     def setUp(self):
@@ -68,7 +90,7 @@ class SoloViewTestCase(SolosBaseTestCase):
         with self.assertTemplateUsed("solos/solo_detail.html"):
             response = solo_detail(request, album = self.no_funny_hats.slug, track = self.bugle_call_rag.slug, artist = self.drum_solo.slug)
 
-        self.assertEqual(response.status_code, 200)
-        page = response.content.decode()
-        self.assertInHTML('<p id="jmad-artist">Rich</p>', page)
-        self.assertInHTML('<p id="jmad-track">Bugle Call Rag [1 solo]</p>', page)
+            self.assertEqual(response.status_code, 200)
+            page = response.content.decode()
+            self.assertInHTML('<p id="jmad-artist">Rich</p>', page)
+            self.assertInHTML('<p id="jmad-track">Bugle Call Rag [1 solo]</p>', page)

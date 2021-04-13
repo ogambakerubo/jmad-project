@@ -1,3 +1,4 @@
+import pdb
 from django.shortcuts import render
 # from django.views.generic.detail import DetailView
 
@@ -16,12 +17,22 @@ def index(request):
                 )
             )
 
-        if request.GET.get("artist", None):
-            solos_queryset = solos_queryset.filter(
-                artist = request.GET.get("artist", None)
-            )
+        # if request.GET.get("artist", None):
+            # solos_queryset = solos_queryset.filter(
+            #     artist = request.GET.get("artist", None)
+            # )
 
-        context["solos"] = solos_queryset
+        artist_kwarg = request.GET.get('artist', None)
+
+        if artist_kwarg:
+            solos_queryset = solos_queryset.filter(artist = artist_kwarg)
+
+        context = {
+            "solos": solos_queryset,
+        }
+
+        if context["solos"].count() == 0 and artist_kwarg:
+            context["solos"] = Solo.get_artist_tracks_from_musicbrainz(artist_kwarg)
 
     return render(request, 'solos/index.html', context)
 
