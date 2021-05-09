@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'solos',
     'albums',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
