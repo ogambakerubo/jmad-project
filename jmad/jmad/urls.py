@@ -18,11 +18,13 @@ from solos import views
 from django.urls import path, include
 
 from rest_framework import routers
-from albums.views import AlbumViewSet
+from albums.views import AlbumViewSet, TrackViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'albums', AlbumViewSet)
+router.register(r'tracks', TrackViewSet)
+
 
 urlpatterns = [
     # Admin

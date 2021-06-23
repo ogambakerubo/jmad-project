@@ -1,7 +1,8 @@
 from rest_framework.test import APITestCase
 from django.urls import resolve
 
-from albums.models import Album
+from albums.models import Album, Track
+from solos.models import Solo
 
 
 class AlbumAPITestCase(APITestCase):
@@ -31,3 +32,31 @@ class AlbumAPITestCase(APITestCase):
         route = resolve("/api/albums/")
 
         self.assertEqual(route.func.__name__, "AlbumViewSet")
+
+
+class TrackAPITestCase(APITestCase):
+
+    def setUp(self):
+        self.no_funny_hats = Album.objects.create(
+            name="No Funny Hats", slug="no-funny-hats")
+        self.bugle_call_rag = Track.objects.create(name="Bugle Call Rag", slug="bugle-call-rag",
+                                                   album=self.no_funny_hats)
+        self.drum_solo = Solo.objects.create(instrument="drums", artist="Buddy Rich",
+                                             slug="buddy-rich", track=self.bugle_call_rag)
+
+    def test_retrieve_track(self):
+        """ Test that we can get a list of tracks
+        """
+        response = self.client.get("/api/tracks/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]["name"], "Bugle Call Rag")
+        self.assertEqual(response.data[0]["url"],
+                         "http://testserver/api/tracks/1/")
+
+    def test_album_list_route(self):
+        """ Test that we've got routing set up for Albums
+        """
+        route = resolve("/api/tracks/1/")
+
+        self.assertEqual(route.func.__name__, "TrackViewSet")
