@@ -14,16 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from solos import views
 from django.urls import path, include
 
 from rest_framework import routers
+
+from solos import views
 from albums.views import AlbumViewSet, TrackViewSet
+from solos.views import SoloViewSet
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'albums', AlbumViewSet)
 router.register(r'tracks', TrackViewSet)
+router.register(r'solos', SoloViewSet)
 
 
 urlpatterns = [
